@@ -1,9 +1,4 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
 
 ## Loading and preprocessing the data
@@ -14,7 +9,8 @@ Description: counts steps taken, in 5-minute intervals
 
 Data source: Reproducible Research course
 
-```{r}
+
+```r
 step <- read.csv("activity.csv")
 ```
 
@@ -24,20 +20,26 @@ step <- read.csv("activity.csv")
 - histogram of total number of steps by day
 - report median and mean
 
-```{r}
+
+```r
 library(plyr)
 daystep <- aggregate(step$steps, list(step$date), sum, na.rm=TRUE)
 colnames(daystep) <- c("Date", "Steps")
 hist(daystep$Steps, breaks=9,
      main="Total Steps by Day",
      xlab="Total Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-2-1.png) 
+
+```r
 steps.day.median <- median(daystep$Steps)
 steps.day.mean <- mean(daystep$Steps)
 ```
 
-Median total steps per day: `r steps.day.median`
+Median total steps per day: 10395
 
-Mean total steps per day: `r steps.day.mean`
+Mean total steps per day: 9354.2295082
 
 
 ## What is the average daily activity pattern?
@@ -45,16 +47,22 @@ Mean total steps per day: `r steps.day.mean`
 - time series plot of steps by time of day
 - interval containing peak activity
 
-```{r}
+
+```r
 intstep <- aggregate(step$steps, by=list(step$interval), mean,
                      na.rm=TRUE)
 colnames(intstep) <- c("Interval", "Steps")
 plot(intstep, type = "l")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png) 
+
+```r
 peak.i <- which.max(intstep$Steps)
 peak.int <- intstep$Interval[peak.i]
 ```
 
-Interval `r peak.int` has the greatest number of steps.
+Interval 835 has the greatest number of steps.
 
 
 ## Imputing missing values
@@ -63,7 +71,8 @@ Interval `r peak.int` has the greatest number of steps.
 - replace NA
 - redo steps per day
 
-```{r}
+
+```r
 step.count.na <- sum(is.na(step$steps))
 
 # replace NA sequentially with previous value or 0
@@ -81,15 +90,20 @@ colnames(daystep.imp) <- c("Date", "Steps")
 hist(daystep.imp$Steps, breaks=9,
      main="Total Steps by Day",
      xlab="Total Steps")
+```
+
+![](PA1_template_files/figure-html/unnamed-chunk-4-1.png) 
+
+```r
 steps.day.median.imp <- median(daystep.imp$Steps)
 steps.day.mean.imp <- mean(daystep.imp$Steps)
 ```
 
 Median total steps per day (after replacing missing values): 
-`r steps.day.median.imp`
+10395
 
 Mean total steps per day (after replacing missing values): 
-`r steps.day.mean.imp`
+9354.2295082
 
 Mean total steps per day is 
 unchanged as a result of replacing
@@ -102,7 +116,8 @@ Median is also unchanged.
 - identify weekend
 - panel plot
 
-```{r}
+
+```r
 weekday <- weekdays(as.POSIXlt(as.character(impstep$date)),
                     abbreviate=TRUE) %in%
      c("Mon", "Tue", "Wed", "Thu", "Fri")
@@ -120,6 +135,10 @@ plot(comp$Interval[comp$Weekpart == "weekend"],
 plot(comp$Interval[comp$Weekpart == "weekday"],
      comp$Steps[comp$Weekpart == "weekday"], type="l",
      main="weekday", xlab="Interval", ylab="Steps")
-par(mfrow = c(1, 1))
+```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
+```r
+par(mfrow = c(1, 1))
 ```
